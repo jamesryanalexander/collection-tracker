@@ -1,4 +1,4 @@
-> **Disclosure:** This is a personal desktop/web app intended for tracking my own basic land collection as a collaboration between. It was built with the help of Claude Code; all AI-generated components have been manually reviewed and tested to ensure stability and security.
+> **Disclosure:** This is a personal desktop/web app intended for tracking my own Magic the Gathering collection. It was built with the help of Claude Code; all AI-generated components have been manually reviewed and tested to ensure stability and security.
 
 # Collection Tracker
 
