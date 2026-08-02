@@ -1,0 +1,45 @@
+{% macro card_row(row, location_labels, show_flag=true) %}
+<tr>
+  <td class="thumb-cell">
+    {% if row.image_url %}
+      <img class="thumb" src="{{ row.image_url }}" alt="{{ row.name }}" loading="lazy">
+    {% else %}
+      <div class="missing-image small">No image</div>
+    {% endif %}
+  </td>
+  <td>
+    <strong>{{ row.name }}</strong><br>
+    <span class="mono">{{ row.set_code or row.set_name or '' }}</span>
+    {% if row.foil %}<span class="badge badge-top_loader">Foil</span>{% endif %}
+    <br><span class="mono">{{ row.condition or '' }} &middot; {{ row.language or '' }}</span>
+  </td>
+  <td>${{ '%.2f'|format(row.current_price) }}
+    {% if row.price_change %}
+      <br><span class="mono">{{ '%+d'|format(row.price_change|int) }}%</span>
+    {% endif %}
+  </td>
+  <td><span class="badge badge-{{ row.recommended_location }}">{{ location_labels[row.recommended_location] }}</span></td>
+  <td><span class="badge badge-{{ row.assigned_location }}">{{ location_labels[row.assigned_location] }}</span></td>
+  {% if show_flag %}
+  <td>
+    {% if row.flag_direction %}
+      <span class="badge badge-{{ row.flag_direction }}">
+        {{ 'Price up' if row.flag_direction == 'upgrade' else 'Price down' }}
+      </span>
+    {% else %}
+      <span class="mono">&mdash;</span>
+    {% endif %}
+  </td>
+  {% endif %}
+  <td>
+    <form method="post" action="{{ url_for('assign_card', inventory_id=row.inventory_id) }}" class="assign-form">
+      <select name="location">
+        {% for loc, label in location_labels.items() %}
+          <option value="{{ loc }}" {% if loc == row.assigned_location %}selected{% endif %}>{{ label }}</option>
+        {% endfor %}
+      </select>
+      <button type="submit">Update</button>
+    </form>
+  </td>
+</tr>
+{% endmacro %}

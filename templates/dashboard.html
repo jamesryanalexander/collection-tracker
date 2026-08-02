@@ -1,0 +1,96 @@
+{% extends 'base.html' %}
+{% from '_card_row.html' import card_row %}
+{% block title %}Dashboard &middot; Collection Tracker{% endblock %}
+{% block content %}
+
+<div class="stats-row">
+  <div class="stat">
+    <strong>{{ kpis.unique_cards }}</strong>
+    <span>Unique printings</span>
+  </div>
+  <div class="stat">
+    <strong>{{ kpis.total_copies }}</strong>
+    <span>Copies owned</span>
+  </div>
+  <div class="stat">
+    <strong>${{ '%.2f'|format(kpis.total_value) }}</strong>
+    <span>Total value</span>
+  </div>
+  {% for loc in ['bulk', 'sleeve_binder', 'top_loader'] %}
+  <div class="stat">
+    <strong>{{ kpis.buckets[loc].count }}</strong>
+    <span>{{ location_labels[loc] }} (${{ '%.2f'|format(kpis.buckets[loc].value) }})</span>
+  </div>
+  {% endfor %}
+  <div class="stat">
+    <strong>{{ kpis.flag_count }}</strong>
+    <span><a href="{{ url_for('flags') }}">Active flags</a></span>
+  </div>
+</div>
+
+<form method="get" class="card-panel toolbar filters">
+  <label>
+    Search
+    <input type="search" name="q" value="{{ q }}" placeholder="Card name">
+  </label>
+  <label>
+    Location
+    <select name="location">
+      <option value="">All</option>
+      {% for loc, label in location_labels.items() %}
+        <option value="{{ loc }}" {% if loc == location %}selected{% endif %}>{{ label }}</option>
+      {% endfor %}
+    </select>
+  </label>
+  <label class="checkline">
+    <input type="checkbox" name="flagged" value="1" {% if flagged %}checked{% endif %}>
+    Flagged only
+  </label>
+  <label>
+    Sort by
+    <select name="sort">
+      <option value="name" {% if sort == 'name' %}selected{% endif %}>Name</option>
+      <option value="current_price" {% if sort == 'current_price' %}selected{% endif %}>Price</option>
+      <option value="price_change" {% if sort == 'price_change' %}selected{% endif %}>Recent movement</option>
+      <option value="date_acquired" {% if sort == 'date_acquired' %}selected{% endif %}>Date acquired</option>
+    </select>
+  </label>
+  <label>
+    Direction
+    <select name="dir">
+      <option value="asc" {% if dir == 'asc' %}selected{% endif %}>Ascending</option>
+      <option value="desc" {% if dir == 'desc' %}selected{% endif %}>Descending</option>
+    </select>
+  </label>
+  <button type="submit">Filter</button>
+</form>
+
+{% if rows %}
+<div class="card-panel table-scroll">
+  <table>
+    <thead>
+      <tr>
+        <th></th>
+        <th>Card</th>
+        <th>Price</th>
+        <th>Recommended</th>
+        <th>Assigned</th>
+        <th>Flag</th>
+        <th>Update</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for row in rows %}
+        {{ card_row(row, location_labels) }}
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% else %}
+<div class="empty-state">
+  No cards match these filters yet. If you haven't synced your EchoMTG inventory, click
+  <strong>Sync Now</strong> above.
+</div>
+{% endif %}
+
+{% endblock %}

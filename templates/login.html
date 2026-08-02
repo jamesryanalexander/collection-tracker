@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+{% block title %}EchoMTG Login &middot; Collection Tracker{% endblock %}
+{% block content %}
+<section class="card-panel login-panel">
+  <h2>Log in to EchoMTG</h2>
+  <p>Your email and password are sent directly to EchoMTG's API to retrieve a temporary access
+    token (valid ~24 hours) &mdash; they are never stored. Once you have a permanent EchoMTG API
+    key, set <code>ECHOMTG_API_KEY</code> in <code>config.json</code> or the environment and this
+    login step will be skipped automatically.</p>
+  <form method="post" class="login-fields">
+    <label>
+      Email
+      <input type="email" name="email" autocomplete="email" required autofocus>
+    </label>
+    <label>
+      Password
+      <input type="password" name="password" autocomplete="current-password" required>
+    </label>
+    <input type="hidden" name="next" value="{{ next }}">
+    <div class="login-actions">
+      <button type="submit">Log in</button>
+    </div>
+  </form>
+</section>
+{% endblock %}

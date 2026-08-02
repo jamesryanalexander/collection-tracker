@@ -1,0 +1,71 @@
+{% extends 'base.html' %}
+{% block title %}Settings &middot; Collection Tracker{% endblock %}
+{% block content %}
+
+<div class="settings-grid">
+  <section class="card-panel">
+    <h2>Storage thresholds</h2>
+    <p>Cards priced under the sleeve threshold go to <strong>bulk</strong>; between the two
+      thresholds go <strong>sleeved in a binder</strong>; at or above the top-loader threshold go
+      in a <strong>top loader</strong>.</p>
+    <form method="post" class="threshold-fields">
+      <label>
+        Sleeve threshold ($)
+        <input type="number" step="0.01" min="0.01" name="sleeve_threshold" value="{{ '%.2f'|format(sleeve_threshold) }}">
+      </label>
+      <label>
+        Top-loader threshold ($)
+        <input type="number" step="0.01" min="0.01" name="topload_threshold" value="{{ '%.2f'|format(topload_threshold) }}">
+      </label>
+      <div class="settings-actions">
+        <button type="submit">Save thresholds</button>
+      </div>
+    </form>
+    <form method="post" action="{{ url_for('settings_recompute') }}" class="settings-actions">
+      <button type="submit" class="ghost">Recalculate flags now</button>
+    </form>
+
+    <h2>EchoMTG connection</h2>
+    {% if has_permanent_key %}
+      <p>Using a permanent API key from config &mdash; login is skipped.</p>
+    {% else %}
+      <p>Using a temporary login session (tokens expire after ~24 hours). Set
+        <code>ECHOMTG_API_KEY</code> in <code>config.json</code> once you have a permanent key.</p>
+    {% endif %}
+    <p>Site login gate: {{ 'enabled' if auth_enabled else 'disabled (local dev default)' }}</p>
+  </section>
+
+  <section class="card-panel">
+    <h2>Recent syncs</h2>
+    {% if sync_logs %}
+    <div class="table-scroll">
+      <table>
+        <thead>
+          <tr>
+            <th>Started</th><th>Trigger</th><th>Status</th><th>Seen</th><th>New</th>
+            <th>Updated</th><th>Flags &uarr;</th><th>Flags &darr;</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for log in sync_logs %}
+          <tr>
+            <td class="mono">{{ log.started_at }}</td>
+            <td>{{ log.trigger }}</td>
+            <td>{{ log.status }}{% if log.message %} <span class="mono">({{ log.message[:60] }})</span>{% endif %}</td>
+            <td>{{ log.items_seen }}</td>
+            <td>{{ log.items_new }}</td>
+            <td>{{ log.items_updated }}</td>
+            <td>{{ log.flags_raised }}</td>
+            <td>{{ log.flags_cleared }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    {% else %}
+    <p class="mono">No syncs yet.</p>
+    {% endif %}
+  </section>
+</div>
+
+{% endblock %}

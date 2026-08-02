@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+{% from '_card_row.html' import card_row %}
+{% block title %}Flags &middot; Collection Tracker{% endblock %}
+{% block content %}
+
+<section class="card-panel flag-section">
+  <h2>Price went up &mdash; consider upgrading protection ({{ upgrades|length }})</h2>
+  {% if upgrades %}
+  <div class="table-scroll">
+    <table>
+      <thead>
+        <tr><th></th><th>Card</th><th>Price</th><th>Recommended</th><th>Assigned</th><th>Flag</th><th>Update</th></tr>
+      </thead>
+      <tbody>
+        {% for row in upgrades %}
+          {{ card_row(row, location_labels) }}
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% else %}
+  <p class="mono">Nothing to upgrade right now.</p>
+  {% endif %}
+</section>
+
+<section class="card-panel flag-section">
+  <h2>Price went down &mdash; could move to cheaper storage ({{ downgrades|length }})</h2>
+  {% if downgrades %}
+  <div class="table-scroll">
+    <table>
+      <thead>
+        <tr><th></th><th>Card</th><th>Price</th><th>Recommended</th><th>Assigned</th><th>Flag</th><th>Update</th></tr>
+      </thead>
+      <tbody>
+        {% for row in downgrades %}
+          {{ card_row(row, location_labels) }}
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% else %}
+  <p class="mono">Nothing to downgrade right now.</p>
+  {% endif %}
+</section>
+
+{% endblock %}
